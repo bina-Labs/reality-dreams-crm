@@ -13,3 +13,6 @@ npm-debug.log*
 .vercel
 *.tsbuildinfo
 next-env.d.ts
+
+# local brand/source assets (kept locally, not deployed or tracked)
+/brand-assets/
