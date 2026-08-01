@@ -1,0 +1,15 @@
+/node_modules
+/.next/
+/out/
+/build
+.DS_Store
+*.pem
+npm-debug.log*
+
+# env — ignore ALL env files except the committed example
+.env*
+!.env.example
+
+.vercel
+*.tsbuildinfo
+next-env.d.ts
