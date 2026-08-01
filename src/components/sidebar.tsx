@@ -108,6 +108,29 @@ export function Sidebar({
           </form>
         </div>
       </aside>
+
+      {/* mobile bottom tab bar */}
+      <nav className="fixed inset-x-0 bottom-0 z-40 flex items-stretch justify-around border-t border-border bg-surface/95 px-1 pt-1 backdrop-blur md:hidden">
+        {items.map((item) => {
+          const Icon = item.icon;
+          const active = isActive(item.href, "exact" in item ? item.exact : false);
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={() => setOpen(false)}
+              aria-current={active ? "page" : undefined}
+              className={cn(
+                "flex flex-1 flex-col items-center gap-0.5 rounded-lg py-1.5 text-[10px] font-medium transition",
+                active ? "text-primary" : "text-muted hover:text-foreground",
+              )}
+            >
+              <Icon size={20} />
+              <span className="max-w-full truncate">{t(item.key)}</span>
+            </Link>
+          );
+        })}
+      </nav>
     </>
   );
 }
