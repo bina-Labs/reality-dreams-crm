@@ -40,7 +40,7 @@
   "auth": {
     "signin": "התחברות",
     "signup": "הרשמה",
-    "email": "אימייל",
+    "email": "דואר אלקטרוני",
     "password": "סיסמה",
     "signinCta": "התחבר כדי להמשיך",
     "signupCta": "צור חשבון חדש",
@@ -50,7 +50,19 @@
     "invalidCredentials": "אימייל או סיסמה שגויים",
     "alreadyRegistered": "האימייל כבר רשום",
     "passwordShort": "הסיסמה חייבת להכיל לפחות 6 תווים",
-    "genericError": "אירעה שגיאה"
+    "genericError": "אירעה שגיאה",
+    "tagline": "גלו את הבלתי רגיל",
+    "bannerTitle": "REALITY DREAMS CRM",
+    "bannerSub": "Luxury Management Redefined",
+    "rememberMe": "זכור אותי",
+    "forgotPassword": "שכחת סיסמה?",
+    "noAccountQ": "אין לך חשבון?",
+    "signupNow": "הירשם עכשיו",
+    "hasAccountQ": "כבר יש לך חשבון?",
+    "signinNow": "התחבר עכשיו",
+    "footer": "REALITY DREAMS LUXURY TRAVEL · REDEFINING 2024 © EXCELLENCE",
+    "resetSent": "נשלח אליך קישור לאיפוס הסיסמה",
+    "enterEmailFirst": "הזן קודם את כתובת האימייל"
   },
   "pending": {
     "title": "החשבון ממתין לאישור",

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Heebo } from "next/font/google";
+import { Heebo, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { LocaleProvider } from "@/i18n/provider";
 import { getLocale } from "@/i18n/server";
@@ -9,6 +9,14 @@ const heebo = Heebo({
   variable: "--font-heebo",
   subsets: ["hebrew", "latin"],
   weight: ["300", "400", "500", "700", "800"],
+});
+
+// Luxury display serif — used for brand headings (currently the login page).
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -28,7 +36,7 @@ export default async function RootLayout({
   const locale = await getLocale();
 
   return (
-    <html lang={locale} dir={LOCALE_DIR[locale]} className={`${heebo.variable} h-full`}>
+    <html lang={locale} dir={LOCALE_DIR[locale]} className={`${heebo.variable} ${playfair.variable} h-full`}>
       <body className="min-h-full">
         <LocaleProvider initialLocale={locale}>{children}</LocaleProvider>
       </body>

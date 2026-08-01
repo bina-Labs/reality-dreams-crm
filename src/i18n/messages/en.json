@@ -50,7 +50,19 @@
     "invalidCredentials": "Invalid email or password",
     "alreadyRegistered": "Email is already registered",
     "passwordShort": "Password must be at least 6 characters",
-    "genericError": "Something went wrong"
+    "genericError": "Something went wrong",
+    "tagline": "Discover the extraordinary",
+    "bannerTitle": "REALITY DREAMS CRM",
+    "bannerSub": "Luxury Management Redefined",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "noAccountQ": "No account?",
+    "signupNow": "Sign up now",
+    "hasAccountQ": "Already have an account?",
+    "signinNow": "Sign in",
+    "footer": "REALITY DREAMS LUXURY TRAVEL · REDEFINING 2024 © EXCELLENCE",
+    "resetSent": "A password reset link has been sent to your email",
+    "enterEmailFirst": "Enter your email first"
   },
   "pending": {
     "title": "Account awaiting approval",
