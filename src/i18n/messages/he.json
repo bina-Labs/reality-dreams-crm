@@ -112,6 +112,26 @@
     "recentLeads": "פניות אחרונות",
     "viewAll": "כל הפניות"
   },
+  "pipeline": {
+    "title": "צנרת",
+    "subtitle": "כל מסע לקוח — מהפנייה הראשונה ועד סיום הטיול",
+    "activeStages": "צנרת פעילה",
+    "otherStages": "ממתין וסגור",
+    "kpiActive": "לקוחות פעילים",
+    "kpiConfirmed": "הזמנות מאושרות",
+    "kpiPayment": "ממתין לתשלום",
+    "kpiOperation": "בתפעול",
+    "kpiUrgent": "מקרים דחופים",
+    "filterDestination": "יעד",
+    "filterPriority": "עדיפות",
+    "noConsultant": "לא משויך",
+    "daysLeft": "עוד {n} ימים",
+    "today": "יוצא היום",
+    "departed": "בטיול",
+    "followUpDue": "מעקב נדרש",
+    "empty": "אין עדיין לקוחות בצנרת",
+    "noneInStage": "ריק"
+  },
   "leads": {
     "title": "פניות",
     "subtitle": "כל הפניות מהאתר ומקורות נוספים",

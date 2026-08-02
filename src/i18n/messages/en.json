@@ -112,6 +112,26 @@
     "recentLeads": "Recent leads",
     "viewAll": "View all"
   },
+  "pipeline": {
+    "title": "Pipeline",
+    "subtitle": "Every customer journey — from first inquiry to completed trip",
+    "activeStages": "Active pipeline",
+    "otherStages": "Waiting & closed",
+    "kpiActive": "Active customers",
+    "kpiConfirmed": "Confirmed bookings",
+    "kpiPayment": "Awaiting payment",
+    "kpiOperation": "In operation",
+    "kpiUrgent": "Urgent cases",
+    "filterDestination": "Destination",
+    "filterPriority": "Priority",
+    "noConsultant": "Unassigned",
+    "daysLeft": "{n}d left",
+    "today": "Departs today",
+    "departed": "Traveling",
+    "followUpDue": "Follow-up due",
+    "empty": "No customers in the pipeline yet",
+    "noneInStage": "Empty"
+  },
   "leads": {
     "title": "Leads",
     "subtitle": "Every inquiry from the website and other sources",
