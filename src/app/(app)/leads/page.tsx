@@ -25,7 +25,7 @@ export default async function LeadsPage() {
 
   return (
     <div className="space-y-5">
-      <header>
+      <header className="hidden md:block">
         <h1 className="text-2xl font-extrabold">{t("leads.title")}</h1>
         <p className="mt-1 text-sm text-muted">{t("leads.subtitle")}</p>
       </header>

@@ -126,7 +126,10 @@
     "filterOwner": "Owner",
     "filterSource": "Source",
     "empty": "No leads yet. When an inquiry comes from the website it will show up here.",
-    "count": "{n} leads"
+    "count": "{n} leads",
+    "kpiTotal": "Total leads",
+    "kpiNew": "New",
+    "kpiOpen": "Open"
   },
   "lead": {
     "tripBrief": "Trip brief",
