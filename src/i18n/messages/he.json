@@ -129,7 +129,9 @@
     "count": "{n} פניות",
     "kpiTotal": "סה״כ פניות",
     "kpiNew": "חדשות",
-    "kpiOpen": "פתוחות"
+    "kpiOpen": "פתוחות",
+    "kpiLost": "אבודות",
+    "clearFilters": "נקה מסננים"
   },
   "lead": {
     "tripBrief": "פרטי הטיול",

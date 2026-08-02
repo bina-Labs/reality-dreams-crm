@@ -11,7 +11,7 @@ import { contentDir, cn } from "@/lib/utils";
 import { fmtDate } from "@/lib/format";
 import { updateLeadStatus } from "../actions";
 import type { LeadStatus, Priority, Profile } from "@/lib/types";
-import { Search, ChevronLeft, Users, Globe, Tag, User, Plus, Inbox, FolderOpen } from "lucide-react";
+import { Search, ChevronLeft, Users, Globe, Tag, User, Plus, Inbox, FolderOpen, X } from "lucide-react";
 
 export type LeadRow = {
   id: string;
@@ -63,23 +63,17 @@ export function LeadsView({ leads, profiles }: { leads: LeadRow[]; profiles: Pro
     });
   }, [leads, q, status, owner, source]);
 
+  const newCount = useMemo(() => leads.filter((l) => l.status === "new_inquiry").length, [leads]);
+  const openCount = useMemo(() => leads.filter((l) => OPEN_STATUSES.includes(l.status)).length, [leads]);
+  const lostCount = useMemo(() => leads.filter((l) => l.status === "lost").length, [leads]);
+
   const kpis = useMemo(
     () => [
       { key: "total", label: t("leads.kpiTotal"), value: leads.length, icon: Inbox },
-      {
-        key: "new",
-        label: t("leads.kpiNew"),
-        value: leads.filter((l) => l.status === "new_inquiry").length,
-        icon: Users,
-      },
-      {
-        key: "open",
-        label: t("leads.kpiOpen"),
-        value: leads.filter((l) => OPEN_STATUSES.includes(l.status)).length,
-        icon: FolderOpen,
-      },
+      { key: "new", label: t("leads.kpiNew"), value: newCount, icon: Users },
+      { key: "open", label: t("leads.kpiOpen"), value: openCount, icon: FolderOpen },
     ],
-    [leads, t],
+    [leads.length, newCount, openCount, t],
   );
 
   function changeStatus(id: string, next: LeadStatus) {
@@ -91,6 +85,15 @@ export function LeadsView({ leads, profiles }: { leads: LeadRow[]; profiles: Pro
 
   const ownerName = (p: LeadRow["assignee"]) =>
     p?.full_name || p?.email || t("common.unassigned");
+
+  const anyFilter =
+    q.trim() !== "" || status !== "all" || owner !== "all" || source !== "all";
+  function clearFilters() {
+    setQ("");
+    setStatus("all");
+    setOwner("all");
+    setSource("all");
+  }
 
   const statusChips: string[] = ["all", ...ALL_STATUSES];
 
@@ -115,6 +118,24 @@ export function LeadsView({ leads, profiles }: { leads: LeadRow[]; profiles: Pro
             </div>
           );
         })}
+      </div>
+
+      {/* KPI summary — desktop */}
+      <div className="hidden gap-3 md:grid md:grid-cols-4">
+        {[
+          { label: t("leads.kpiTotal"), value: leads.length },
+          { label: t("leads.kpiNew"), value: newCount },
+          { label: t("leads.kpiOpen"), value: openCount },
+          { label: t("leads.kpiLost"), value: lostCount },
+        ].map((k) => (
+          <div
+            key={k.label}
+            className="rounded-xl border border-border bg-surface px-4 py-3 shadow-sm"
+          >
+            <div className="text-xs text-muted">{k.label}</div>
+            <div className="mt-1 text-xl font-bold leading-none">{k.value}</div>
+          </div>
+        ))}
       </div>
 
       {/* search — shared */}
@@ -154,6 +175,16 @@ export function LeadsView({ leads, profiles }: { leads: LeadRow[]; profiles: Pro
               <option key={s} value={s}>{s}</option>
             ))}
           </Select>
+        )}
+        {anyFilter && (
+          <button
+            type="button"
+            onClick={clearFilters}
+            className="ms-auto inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-muted transition hover:bg-surface-2 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <X size={15} />
+            {t("leads.clearFilters")}
+          </button>
         )}
       </Card>
 
@@ -224,7 +255,7 @@ export function LeadsView({ leads, profiles }: { leads: LeadRow[]; profiles: Pro
             <div className="board-scroll">
               <table className="w-full min-w-[720px] text-sm">
                 <thead>
-                  <tr className="border-b border-border text-start text-xs text-muted">
+                  <tr className="border-b border-border bg-surface-2/40 text-start text-xs font-semibold text-muted">
                     <Th>{t("leads.traveler")}</Th>
                     <Th>{t("leads.trip")}</Th>
                     <Th>{t("leads.language")}</Th>
@@ -238,12 +269,17 @@ export function LeadsView({ leads, profiles }: { leads: LeadRow[]; profiles: Pro
                   {filtered.map((l) => {
                     const name = l.contact?.full_name || l.contact?.email || "—";
                     return (
-                      <tr key={l.id} className="border-b border-border last:border-0 hover:bg-surface-2/60">
+                      <tr key={l.id} className="border-b border-border transition-colors last:border-0 hover:bg-surface-2/70">
                         <Td>
-                          <div className="flex items-center gap-2">
-                            <PriorityBadge priority={l.priority} />
+                          <div className="flex items-center gap-3">
+                            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-2 text-muted">
+                              <User size={16} />
+                            </span>
                             <div className="min-w-0">
-                              <div className="truncate font-medium" dir={contentDir(name)}>{name}</div>
+                              <div className="flex items-center gap-2">
+                                <PriorityBadge priority={l.priority} />
+                                <span className="truncate font-semibold" dir={contentDir(name)}>{name}</span>
+                              </div>
                               {l.contact?.email && (
                                 <div className="truncate text-xs text-muted" dir="ltr">{l.contact.email}</div>
                               )}
@@ -251,30 +287,36 @@ export function LeadsView({ leads, profiles }: { leads: LeadRow[]; profiles: Pro
                           </div>
                         </Td>
                         <Td>
-                          <div className="text-xs text-muted">
+                          <div className="font-medium">{l.service_category || "—"}</div>
+                          <div className="mt-0.5 text-xs text-muted">
                             {l.number_of_travelers ? `${l.number_of_travelers} · ` : ""}
-                            {l.service_category || "—"}
+                            {l.travel_start_date ? fmtDate(l.travel_start_date, locale) : ""}
                           </div>
-                          {l.travel_start_date && (
-                            <div className="text-xs text-muted">{fmtDate(l.travel_start_date, locale)}</div>
-                          )}
                         </Td>
                         <Td>
                           <span dir={contentDir(l.preferred_language)}>{l.preferred_language || "—"}</span>
                         </Td>
                         <Td><span className="text-xs text-muted">{ownerName(l.assignee)}</span></Td>
                         <Td>
-                          <select
-                            value={l.status}
-                            disabled={pending}
-                            onChange={(e) => changeStatus(l.id, e.target.value as LeadStatus)}
-                            onClick={(e) => e.stopPropagation()}
-                            className="max-w-[170px] rounded-md border border-border bg-surface px-2 py-1 text-xs outline-none focus:ring-2 focus:ring-ring"
-                          >
-                            {ALL_STATUSES.map((s) => (
-                              <option key={s} value={s}>{t(`status.${s}`)}</option>
-                            ))}
-                          </select>
+                          <div className="flex items-center gap-2">
+                            <span
+                              className="h-2 w-2 shrink-0 rounded-full"
+                              style={{ background: STATUS_COLORS[l.status] }}
+                            />
+                            <select
+                              value={l.status}
+                              disabled={pending}
+                              onChange={(e) => changeStatus(l.id, e.target.value as LeadStatus)}
+                              onClick={(e) => e.stopPropagation()}
+                              aria-label={t("common.status")}
+                              style={{ color: STATUS_COLORS[l.status] }}
+                              className="max-w-[170px] rounded-md border border-border bg-surface px-2 py-1 text-xs font-medium outline-none focus:ring-2 focus:ring-ring"
+                            >
+                              {ALL_STATUSES.map((s) => (
+                                <option key={s} value={s}>{t(`status.${s}`)}</option>
+                              ))}
+                            </select>
+                          </div>
                         </Td>
                         <Td>
                           <span className="whitespace-nowrap text-xs text-muted">{fmtDate(l.created_at, locale)}</span>
@@ -387,8 +429,8 @@ function LeadCard({
 }
 
 function Th({ children }: { children: React.ReactNode }) {
-  return <th className="px-4 py-3 text-start font-medium">{children}</th>;
+  return <th className="px-4 py-3 text-start">{children}</th>;
 }
 function Td({ children }: { children: React.ReactNode }) {
-  return <td className="px-4 py-3 align-middle">{children}</td>;
+  return <td className="px-4 py-4 align-middle">{children}</td>;
 }

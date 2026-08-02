@@ -129,7 +129,9 @@
     "count": "{n} leads",
     "kpiTotal": "Total leads",
     "kpiNew": "New",
-    "kpiOpen": "Open"
+    "kpiOpen": "Open",
+    "kpiLost": "Lost",
+    "clearFilters": "Clear filters"
   },
   "lead": {
     "tripBrief": "Trip brief",

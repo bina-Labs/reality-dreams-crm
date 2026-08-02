@@ -73,7 +73,7 @@ export default async function DashboardPage() {
   const recent = leads.slice(0, 8);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-7">
       {/* hero */}
       <div
         className="relative h-32 overflow-hidden rounded-2xl bg-primary shadow-sm sm:h-40"
@@ -110,8 +110,8 @@ export default async function DashboardPage() {
               >
                 <Icon size={18} />
               </span>
-              <div className="mt-3 text-2xl font-extrabold leading-none">{s.value}</div>
-              <div className={cn("mt-1 text-xs", s.highlight ? "text-white/70" : "text-muted")}>
+              <div className="mt-4 text-3xl font-extrabold leading-none tracking-tight">{s.value}</div>
+              <div className={cn("mt-1.5 text-xs font-medium", s.highlight ? "text-white/70" : "text-muted")}>
                 {s.label}
               </div>
             </div>
@@ -144,7 +144,7 @@ export default async function DashboardPage() {
             </Link>
           }
         />
-        <Card className="p-2 sm:p-3">
+        <Card className="p-3">
           {recent.length === 0 ? (
             <p className="py-8 text-center text-sm text-muted">{t("leads.empty")}</p>
           ) : (
@@ -155,10 +155,10 @@ export default async function DashboardPage() {
                   <li key={l.id}>
                     <Link
                       href={`/leads/${l.id}`}
-                      className="flex items-center gap-3 rounded-xl px-2 py-3 transition hover:bg-surface-2/60"
+                      className="flex items-center gap-3 rounded-xl px-3 py-3.5 transition hover:bg-surface-2/70"
                     >
                       <div className="min-w-0 flex-1">
-                        <div className="truncate font-semibold" dir={contentDir(name)}>
+                        <div className="truncate text-[15px] font-semibold" dir={contentDir(name)}>
                           {name}
                         </div>
                         <div className="mt-0.5 truncate text-xs text-muted">
