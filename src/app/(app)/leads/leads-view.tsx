@@ -6,12 +6,12 @@ import { useRouter } from "next/navigation";
 import { useLocale } from "@/i18n/provider";
 import { Card, Input, Select } from "@/components/ui";
 import { StatusBadge, PriorityBadge } from "@/components/badges";
-import { ALL_STATUSES, OPEN_STATUSES, STATUS_COLORS } from "@/lib/constants";
+import { ALL_STATUSES, OPEN_STATUSES, STATUS_COLORS, STATUS_EMOJI } from "@/lib/constants";
 import { contentDir, cn } from "@/lib/utils";
 import { fmtDate } from "@/lib/format";
 import { updateLeadStatus } from "../actions";
 import type { LeadStatus, Priority, Profile } from "@/lib/types";
-import { Search, ChevronLeft, Users, Globe, Tag, User, Plus, Inbox, FolderOpen, X } from "lucide-react";
+import { Search, ChevronLeft, Users, Globe, Tag, User, Plus, Inbox, FolderOpen, X, XCircle } from "lucide-react";
 
 export type LeadRow = {
   id: string;
@@ -120,26 +120,46 @@ export function LeadsView({ leads, profiles }: { leads: LeadRow[]; profiles: Pro
         })}
       </div>
 
-      {/* KPI summary — desktop */}
-      <div className="hidden gap-3 md:grid md:grid-cols-4">
+      {/* KPI summary — desktop (premium, matches Dashboard) */}
+      <div className="hidden gap-4 md:grid md:grid-cols-4">
         {[
-          { label: t("leads.kpiTotal"), value: leads.length },
-          { label: t("leads.kpiNew"), value: newCount },
-          { label: t("leads.kpiOpen"), value: openCount },
-          { label: t("leads.kpiLost"), value: lostCount },
-        ].map((k) => (
-          <div
-            key={k.label}
-            className="rounded-xl border border-border bg-surface px-4 py-3 shadow-sm"
-          >
-            <div className="text-xs text-muted">{k.label}</div>
-            <div className="mt-1 text-xl font-bold leading-none">{k.value}</div>
-          </div>
-        ))}
+          { label: t("leads.kpiTotal"), value: leads.length, icon: Inbox, color: "#0d9488", highlight: false },
+          { label: t("leads.kpiNew"), value: newCount, icon: Users, color: "#0ea5e9", highlight: false },
+          { label: t("leads.kpiOpen"), value: openCount, icon: FolderOpen, color: "#0d9488", highlight: true },
+          { label: t("leads.kpiLost"), value: lostCount, icon: XCircle, color: "#ef4444", highlight: false },
+        ].map((k) => {
+          const Icon = k.icon;
+          return (
+            <div
+              key={k.label}
+              className={cn(
+                "rounded-2xl border p-5 transition",
+                k.highlight
+                  ? "border-transparent bg-foreground text-white shadow-lg"
+                  : "border-border bg-surface shadow-sm hover:shadow-md",
+              )}
+            >
+              <span
+                className="flex h-11 w-11 items-center justify-center rounded-xl"
+                style={
+                  k.highlight
+                    ? { backgroundColor: "rgba(255,255,255,0.12)", color: "#fff" }
+                    : { backgroundColor: `${k.color}1a`, color: k.color }
+                }
+              >
+                <Icon size={20} />
+              </span>
+              <div className="mt-4 text-3xl font-extrabold leading-none tracking-tight">{k.value}</div>
+              <div className={cn("mt-1.5 text-xs font-medium", k.highlight ? "text-white/70" : "text-muted")}>
+                {k.label}
+              </div>
+            </div>
+          );
+        })}
       </div>
 
-      {/* search — shared */}
-      <div className="relative">
+      {/* search — mobile only */}
+      <div className="relative md:hidden">
         <Search
           size={16}
           className="pointer-events-none absolute top-1/2 start-3 -translate-y-1/2 text-muted"
@@ -153,15 +173,29 @@ export function LeadsView({ leads, profiles }: { leads: LeadRow[]; profiles: Pro
         />
       </div>
 
-      {/* desktop filters */}
-      <Card className="hidden gap-3 p-3 md:flex md:items-center">
-        <Select value={status} onChange={(e) => setStatus(e.target.value)} className="md:w-48">
+      {/* desktop toolbar — compact search + filters */}
+      <Card className="hidden items-center gap-2 p-2 md:flex">
+        <div className="relative flex-1">
+          <Search
+            size={16}
+            className="pointer-events-none absolute top-1/2 start-3 -translate-y-1/2 text-muted"
+          />
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder={t("common.search")}
+            aria-label={t("common.search")}
+            className="h-10 w-full rounded-lg border border-transparent bg-surface-2/60 pe-3 ps-9 text-sm outline-none transition placeholder:text-muted focus:border-border focus:bg-surface focus:ring-2 focus:ring-ring"
+          />
+        </div>
+        <div className="mx-1 h-6 w-px bg-border" />
+        <Select value={status} onChange={(e) => setStatus(e.target.value)} className="w-44">
           <option value="all">{t("leads.filterStatus")}: {t("common.all")}</option>
           {ALL_STATUSES.map((s) => (
             <option key={s} value={s}>{t(`status.${s}`)}</option>
           ))}
         </Select>
-        <Select value={owner} onChange={(e) => setOwner(e.target.value)} className="md:w-44">
+        <Select value={owner} onChange={(e) => setOwner(e.target.value)} className="w-40">
           <option value="all">{t("leads.filterOwner")}: {t("common.all")}</option>
           <option value="unassigned">{t("common.unassigned")}</option>
           {profiles.map((p) => (
@@ -169,7 +203,7 @@ export function LeadsView({ leads, profiles }: { leads: LeadRow[]; profiles: Pro
           ))}
         </Select>
         {sources.length > 1 && (
-          <Select value={source} onChange={(e) => setSource(e.target.value)} className="md:w-40">
+          <Select value={source} onChange={(e) => setSource(e.target.value)} className="w-36">
             <option value="all">{t("leads.filterSource")}: {t("common.all")}</option>
             {sources.map((s) => (
               <option key={s} value={s}>{s}</option>
@@ -180,7 +214,7 @@ export function LeadsView({ leads, profiles }: { leads: LeadRow[]; profiles: Pro
           <button
             type="button"
             onClick={clearFilters}
-            className="ms-auto inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-muted transition hover:bg-surface-2 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-muted transition hover:bg-surface-2 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <X size={15} />
             {t("leads.clearFilters")}
@@ -255,7 +289,7 @@ export function LeadsView({ leads, profiles }: { leads: LeadRow[]; profiles: Pro
             <div className="board-scroll">
               <table className="w-full min-w-[720px] text-sm">
                 <thead>
-                  <tr className="border-b border-border bg-surface-2/40 text-start text-xs font-semibold text-muted">
+                  <tr className="border-b border-border bg-surface-2 text-start text-[11px] font-semibold uppercase tracking-wider text-muted">
                     <Th>{t("leads.traveler")}</Th>
                     <Th>{t("leads.trip")}</Th>
                     <Th>{t("leads.language")}</Th>
@@ -269,7 +303,7 @@ export function LeadsView({ leads, profiles }: { leads: LeadRow[]; profiles: Pro
                   {filtered.map((l) => {
                     const name = l.contact?.full_name || l.contact?.email || "—";
                     return (
-                      <tr key={l.id} className="border-b border-border transition-colors last:border-0 hover:bg-surface-2/70">
+                      <tr key={l.id} className="border-b border-border transition-colors last:border-0 hover:bg-primary/[0.04]">
                         <Td>
                           <div className="flex items-center gap-3">
                             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-2 text-muted">
@@ -298,25 +332,25 @@ export function LeadsView({ leads, profiles }: { leads: LeadRow[]; profiles: Pro
                         </Td>
                         <Td><span className="text-xs text-muted">{ownerName(l.assignee)}</span></Td>
                         <Td>
-                          <div className="flex items-center gap-2">
-                            <span
-                              className="h-2 w-2 shrink-0 rounded-full"
-                              style={{ background: STATUS_COLORS[l.status] }}
-                            />
-                            <select
-                              value={l.status}
-                              disabled={pending}
-                              onChange={(e) => changeStatus(l.id, e.target.value as LeadStatus)}
-                              onClick={(e) => e.stopPropagation()}
-                              aria-label={t("common.status")}
-                              style={{ color: STATUS_COLORS[l.status] }}
-                              className="max-w-[170px] rounded-md border border-border bg-surface px-2 py-1 text-xs font-medium outline-none focus:ring-2 focus:ring-ring"
-                            >
-                              {ALL_STATUSES.map((s) => (
-                                <option key={s} value={s}>{t(`status.${s}`)}</option>
-                              ))}
-                            </select>
-                          </div>
+                          <select
+                            value={l.status}
+                            disabled={pending}
+                            onChange={(e) => changeStatus(l.id, e.target.value as LeadStatus)}
+                            onClick={(e) => e.stopPropagation()}
+                            aria-label={t("common.status")}
+                            style={{
+                              color: STATUS_COLORS[l.status],
+                              backgroundColor: `${STATUS_COLORS[l.status]}14`,
+                              borderColor: `${STATUS_COLORS[l.status]}55`,
+                            }}
+                            className="max-w-[190px] cursor-pointer rounded-full border px-3 py-1.5 text-xs font-semibold outline-none transition focus:ring-2 focus:ring-ring"
+                          >
+                            {ALL_STATUSES.map((s) => (
+                              <option key={s} value={s} className="bg-surface font-medium text-foreground">
+                                {STATUS_EMOJI[s]} {t(`status.${s}`)}
+                              </option>
+                            ))}
+                          </select>
                         </Td>
                         <Td>
                           <span className="whitespace-nowrap text-xs text-muted">{fmtDate(l.created_at, locale)}</span>
@@ -324,7 +358,7 @@ export function LeadsView({ leads, profiles }: { leads: LeadRow[]; profiles: Pro
                         <Td>
                           <Link
                             href={`/leads/${l.id}`}
-                            className="inline-flex items-center gap-1 whitespace-nowrap text-xs font-medium text-primary hover:underline"
+                            className="inline-flex items-center gap-1 whitespace-nowrap rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-foreground transition hover:border-primary/40 hover:bg-primary/5 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                           >
                             {t("common.open")}
                             <ChevronLeft size={14} className="rtl:rotate-0 ltr:rotate-180" />
@@ -429,8 +463,8 @@ function LeadCard({
 }
 
 function Th({ children }: { children: React.ReactNode }) {
-  return <th className="px-4 py-3 text-start">{children}</th>;
+  return <th className="px-5 py-3.5 text-start">{children}</th>;
 }
 function Td({ children }: { children: React.ReactNode }) {
-  return <td className="px-4 py-4 align-middle">{children}</td>;
+  return <td className="px-5 py-4 align-middle">{children}</td>;
 }
